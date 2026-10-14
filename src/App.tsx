@@ -1,27 +1,36 @@
-// App.tsx is the top component of the application.
+// App.tsx is where the application starts.
 //
-// It has two jobs:
+// It has three jobs:
 //   1. Remember the user's choices ("state").
-//   2. Show the header, the navigation and the page the user selected.
+//   2. Show the header, the navigation and the tab the user selected.
+//   3. Start React (at the bottom of this file).
 //
-// The state lives here, and not inside the pages, so that the choices
-// are still remembered when the user switches between pages.
+// The state lives here, and not inside the tabs, so that the choices
+// are still remembered when the user switches between tabs.
+//
+// The app has three tabs, one file each:
+//   Overview.tsx   Compare.tsx   Scenarios.tsx
 
-import { useState } from 'react';
-import { countries, joinScenarios, originalRows } from './data';
-import { loadScenarios, saveScenarios, type SavedScenarios } from './scenarios';
+import { StrictMode, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { emptyFilters, type Filters } from './calculations';
 import {
-  emptyFilters,
-  type CompareSelection,
-  type Filters,
+  countries,
+  joinScenarios,
+  loadScenarios,
+  originalRows,
+  saveScenarios,
   type MedalRow,
-  type PageName,
+  type SavedScenarios,
   type Scenario,
-} from './types';
-import DataNote from './components/DataNote';
-import ScenarioEditor from './components/ScenarioEditor';
-import ComparePage from './pages/ComparePage';
-import OverviewPage from './pages/OverviewPage';
+} from './data';
+import ComparePage, { type CompareSelection } from './Compare';
+import OverviewPage from './Overview';
+import ScenarioEditor from './Scenarios';
+import './styles.css';
+
+// The three tabs of the app. We switch between them with a state variable.
+type PageName = 'Overview' | 'Compare' | 'Scenarios';
 
 const pageNames: PageName[] = ['Overview', 'Compare', 'Scenarios'];
 
@@ -32,7 +41,7 @@ const startSelection: CompareSelection = {
   season: 'Summer',
 };
 
-export default function App() {
+function App() {
   // ----- State -----
   // useState gives us [the current value, a function to change it].
   // Calling the "set" function makes React draw the screen again with the new value.
@@ -118,7 +127,17 @@ export default function App() {
           </div>
         </section>
 
-        <DataNote />
+        {/* The most important warning about this dataset. */}
+        <div className="data-note">
+          <span className="note-icon" aria-hidden="true">
+            i
+          </span>
+          <p>
+            <strong>Athlete medals, not the official medal table.</strong> Team members
+            each contribute medals. Population is a single snapshot, not a value for each
+            Olympic year.
+          </p>
+        </div>
 
         {/* ----- Navigation: three buttons and the scenario switch ----- */}
         <div className="navigation">
@@ -196,3 +215,16 @@ export default function App() {
     </>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Start the app.
+// index.html has an empty <div id="root">. React draws <App /> inside it.
+// The "!" tells TypeScript: "I am sure this element exists" (it is in index.html).
+// StrictMode shows extra warnings during development. It does nothing in production.
+// ---------------------------------------------------------------------------
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);

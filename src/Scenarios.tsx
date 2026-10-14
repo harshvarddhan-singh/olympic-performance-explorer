@@ -1,13 +1,21 @@
-// ScenarioEditor.tsx is the "add or edit data" part of the app.
+// Scenarios.tsx is the "Scenarios" tab: the "add or edit data" part of the app.
 // The user can add, edit and delete hypothetical ("what-if") medal results.
 //
 // The saved list lives in App.tsx, because the other pages need it too.
 // This component only keeps the form the user is currently filling in (the "draft").
+// Checking and saving the entries happens in data.ts (section 6).
 
 import { useState } from 'react';
-import { countriesByName, events, medalTypes, sports, sportsForEvent } from '../data';
-import { isScenario, MAX_MEDAL_COUNT } from '../scenarios';
-import type { Scenario } from '../types';
+import {
+  countriesByName,
+  events,
+  isScenario,
+  MAX_MEDAL_COUNT,
+  medalTypes,
+  sports,
+  sportsForEvent,
+  type Scenario,
+} from './data';
 
 interface ScenarioEditorProps {
   rows: Scenario[];

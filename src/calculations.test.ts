@@ -6,19 +6,28 @@
 
 import { describe, expect, it, vi } from 'vitest';
 import {
+  emptyFilters,
   filterMedals,
+  getCompareInsight,
+  getCountryProfile,
   getDistinctMedallists,
   getEditionTrend,
   getGoldAthleteMedals,
   getMedalsPerMillion,
+  getOverviewInsights,
   getTopAthletes,
   getTopCountries,
   getTotalAthleteMedals,
 } from './calculations';
-import { countries, events, joinScenarios, originalRows } from './data';
-import { getCompareInsight, getCountryProfile, getOverviewInsights } from './insights';
-import { isScenario, loadScenarios, saveScenarios } from './scenarios';
-import { emptyFilters } from './types';
+import {
+  countries,
+  events,
+  isScenario,
+  joinScenarios,
+  loadScenarios,
+  originalRows,
+  saveScenarios,
+} from './data';
 
 describe('totals match the Excel workbook', () => {
   it('sums the medal count instead of counting rows', () => {

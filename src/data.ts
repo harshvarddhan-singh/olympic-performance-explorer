@@ -1,37 +1,113 @@
-// data.ts loads the six JSON tables and joins them into readable rows.
-// This happens once, when the app starts. The original data never changes afterwards.
+// data.ts holds everything about the DATA:
+//   1. TypeScript descriptions ("types") of the tables
+//   2. loading the tables from olympics.json (made from the Excel file by convert_excel.py)
+//   3. lookup maps, so we can find an item by its ID quickly
+//   4. joining the tables into one readable row per medal record
+//   5. small helpers for the dropdowns
+//   6. saving and loading the user's what-if scenarios in the browser
+//
+// It runs once when the app starts. The original data never changes afterwards.
 
-import medalData from './data/medals.json';
-import athleteData from './data/athletes.json';
-import countryData from './data/countries.json';
-import eventData from './data/events.json';
-import sportData from './data/sports.json';
-import medalTypeData from './data/medalTypes.json';
-import type {
-  Athlete,
-  Country,
-  Medal,
-  MedalRecord,
-  MedalRow,
-  NamedItem,
-  OlympicEvent,
-  Scenario,
-} from './types';
+import olympicData from './olympics.json';
 
 // ---------------------------------------------------------------------------
-// 1. The raw tables, with their TypeScript types.
+// 1. Types. They describe the "shape" of the data, so TypeScript can warn us
+//    about mistakes before the app runs. They contain no logic.
 // ---------------------------------------------------------------------------
 
-export const countries: Country[] = countryData;
+// A union type: a Season can only be one of these two exact words.
+export type Season = 'Summer' | 'Winter';
+export type Medal = 'Gold' | 'Silver' | 'Bronze';
+
+export interface Country {
+  id: number;
+  name: string;
+  region: string;
+  // "number | null" means the value can be missing.
+  population: number | null;
+}
+
+export interface OlympicEvent {
+  id: number;
+  year: number;
+  season: Season;
+  city: string;
+  hostCountry: string;
+}
+
+export interface Athlete {
+  id: number;
+  name: string;
+  country: string;
+  sport: string;
+  birthYear: number | null;
+}
+
+// Used for the two small lookup tables: sports and medal types.
+export interface NamedItem {
+  id: number;
+  name: string;
+}
+
+// One row of the fact table (the "Medal Victories" sheet).
+// It only stores ID numbers. The names live in the lookup tables.
+export interface MedalRecord {
+  id: number;
+  athleteId: number | null; // five rows in the workbook have no athlete
+  countryId: number;
+  eventId: number;
+  sportId: number;
+  medalTypeId: number;
+  age: number | null;
+  count: number; // "Number of Medals won" in the workbook
+}
+
+// The joined row. After we look up every ID, we get one readable row.
+// All filters, KPIs and charts work with this type.
+export interface MedalRow {
+  id: string;
+  athleteId: number | null;
+  athleteName: string | null;
+  countryId: number;
+  country: string;
+  region: string;
+  population: number | null;
+  eventId: number;
+  year: number;
+  season: Season;
+  city: string;
+  sportId: number;
+  sport: string;
+  medal: Medal;
+  count: number;
+  // true = a hypothetical row added by the user, false = original workbook data
+  scenario: boolean;
+}
+
+// One hypothetical "what-if" medal result created by the user.
+export interface Scenario {
+  id: string;
+  countryId: number;
+  eventId: number;
+  sportId: number;
+  medalTypeId: number;
+  count: number;
+}
+
+// ---------------------------------------------------------------------------
+// 2. The raw tables, read from olympics.json.
+// ---------------------------------------------------------------------------
+
+export const countries: Country[] = olympicData.countries;
 // "as" is needed here because JSON only knows "string", not our Season type.
-export const events = eventData as OlympicEvent[];
-export const sports: NamedItem[] = sportData;
-export const medalTypes: NamedItem[] = medalTypeData;
-const athletes: Athlete[] = athleteData;
-const medalRecords: MedalRecord[] = medalData;
+export const events = olympicData.events as OlympicEvent[];
+export const sports: NamedItem[] = olympicData.sports;
+export const medalTypes: NamedItem[] = olympicData.medalTypes;
+const athletes: Athlete[] = olympicData.athletes;
+const medalRecords: MedalRecord[] = olympicData.medals;
 
 // ---------------------------------------------------------------------------
-// 2. Lookup maps. A Map finds an item by its ID immediately,
+// 3. Lookup maps. A Map finds an item by its ID immediately,
 //    which is much faster than searching a whole array every time.
 // ---------------------------------------------------------------------------
 
@@ -61,7 +137,7 @@ for (const athlete of athletes) {
 }
 
 // ---------------------------------------------------------------------------
-// 3. The join. It replaces ID numbers with readable names.
+// 4. The join. It replaces ID numbers with readable names.
 //    This is the same idea as relationships in Power BI or a JOIN in SQL.
 // ---------------------------------------------------------------------------
 
@@ -129,7 +205,7 @@ export function joinScenarios(scenarios: Scenario[]): MedalRow[] {
 }
 
 // ---------------------------------------------------------------------------
-// 4. Small helpers used by the dropdowns.
+// 5. Small helpers used by the dropdowns.
 // ---------------------------------------------------------------------------
 
 // The sports that really took place at one Olympic edition.
@@ -160,3 +236,91 @@ export const regionLabels: Record<string, string> = {
   OCEANIA: 'Oceania',
   BALTICS: 'Baltics',
 };
+
+// ---------------------------------------------------------------------------
+// 6. Scenarios: checking, loading and saving the user's what-if entries.
+//    They are stored in localStorage, a small storage area inside the browser.
+//    The original workbook data is never changed.
+// ---------------------------------------------------------------------------
+
+// The name under which the browser stores our list.
+const STORAGE_KEY = 'olympic-explorer-scenarios-v1';
+
+export const MAX_MEDAL_COUNT = 10000;
+
+// Checks that a value really is a valid Scenario.
+// We need this for two reasons:
+//   1. to validate what the user typed in the form
+//   2. to validate what we read back from the browser, which could be old or broken
+// "value is Scenario" tells TypeScript that after a true result it can trust the type.
+export function isScenario(value: unknown): value is Scenario {
+  if (typeof value !== 'object' || value === null) return false;
+  const scenario = value as Scenario;
+
+  // The ID must be non-empty text.
+  if (typeof scenario.id !== 'string' || scenario.id.length === 0) return false;
+
+  // Country, edition and medal type must exist in our data.
+  if (!countries.some((country) => country.id === scenario.countryId)) return false;
+  if (!events.some((event) => event.id === scenario.eventId)) return false;
+  if (!medalTypes.some((medalType) => medalType.id === scenario.medalTypeId))
+    return false;
+
+  // The sport must have taken place at the chosen edition (no Ice Hockey in summer).
+  const allowedSports = sportsForEvent(scenario.eventId);
+  if (!allowedSports.some((sport) => sport.id === scenario.sportId)) return false;
+
+  // The count must be a whole number from 1 to 10,000.
+  if (!Number.isInteger(scenario.count)) return false;
+  if (scenario.count < 1 || scenario.count > MAX_MEDAL_COUNT) return false;
+
+  return true;
+}
+
+// What loadScenarios gives back: the saved rows, plus a warning message if needed.
+export interface SavedScenarios {
+  rows: Scenario[];
+  message: string;
+}
+
+// Reads the saved scenarios from the browser.
+// try/catch stops the app from crashing if storage is blocked or the text is broken.
+export function loadScenarios(): SavedScenarios {
+  try {
+    const text = localStorage.getItem(STORAGE_KEY);
+    if (!text) {
+      return { rows: [], message: '' }; // nothing saved yet
+    }
+
+    // localStorage only stores text, so we turn the text back into data.
+    const parsed: unknown = JSON.parse(text);
+    if (!Array.isArray(parsed) || !parsed.every(isScenario)) {
+      throw new Error('Invalid saved data');
+    }
+
+    // Every entry must have its own unique ID.
+    const uniqueIds = new Set(parsed.map((scenario) => scenario.id));
+    if (uniqueIds.size !== parsed.length) {
+      throw new Error('Duplicate IDs in saved data');
+    }
+
+    return { rows: parsed, message: '' };
+  } catch {
+    return {
+      rows: [],
+      message:
+        'Saved scenarios could not be read. Original data is available. ' +
+        'Saving a new entry will replace the unreadable saved data.',
+    };
+  }
+}
+
+// Saves the list in the browser. Returns '' on success or a warning message on failure.
+export function saveScenarios(rows: Scenario[]): string {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
+    return '';
+  } catch {
+    return 'Browser storage is unavailable. These changes will last only until you reload this page.';
+  }
+}

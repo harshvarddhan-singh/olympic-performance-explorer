@@ -1,20 +1,21 @@
 """
 convert_excel.py - turns the Excel workbook into files the app can use.
 
-It reads the six sheets and writes each one as:
-  - a JSON file in src/data/   (used by the React app)
-  - a CSV file in power-bi/    (used by Power BI)
+It reads the six sheets and writes:
+  - src/olympics.json          one file with all six tables (used by the React app)
+  - one CSV file per sheet in power-bi/   (used by Power BI)
 
 It also checks the data (unique IDs, no broken links between sheets)
-and writes some totals to docs/source-checks.json so we can compare
-them with the numbers the app shows.
+and prints some totals so we can compare them with the numbers the app shows.
 
 The workbook itself is never changed.
 
 Run it from the project folder:
-    python3 scripts/convert_excel.py
+    python3 convert_excel.py
 or with another workbook:
-    python3 scripts/convert_excel.py "/path/to/Olympic Games Dataset.xlsx"
+    python3 convert_excel.py "/path/to/Olympic Games Dataset.xlsx"
+
+It needs the openpyxl library:  python3 -m pip install openpyxl
 """
 
 import csv
@@ -25,14 +26,14 @@ from pathlib import Path
 
 import openpyxl
 
-# The project folder (one level above the "scripts" folder).
-ROOT = Path(__file__).resolve().parents[1]
+# The project folder (the folder this script is in).
+ROOT = Path(__file__).resolve().parent
 
-# Use the path given on the command line, or the copy in the "source" folder.
+# Use the path given on the command line, or the workbook in the project folder.
 if len(sys.argv) > 1:
     SOURCE = Path(sys.argv[1])
 else:
-    SOURCE = ROOT / "source" / "Olympic Games Dataset.xlsx"
+    SOURCE = ROOT / "Olympic Games Dataset.xlsx"
 
 workbook = openpyxl.load_workbook(SOURCE, read_only=True, data_only=True)
 
@@ -145,11 +146,11 @@ for medal in medals:
 # 3. Write the JSON and CSV files
 # ---------------------------------------------------------------------------
 
-for table_name, rows in tables.items():
-    json_path = ROOT / "src" / "data" / f"{table_name}.json"
-    json_text = json.dumps(rows, ensure_ascii=False, separators=(",", ":"))
-    json_path.write_text(json_text + "\n")
+# All six tables go into one JSON file: {"medals": [...], "athletes": [...], ...}
+json_text = json.dumps(tables, ensure_ascii=False, separators=(",", ":"))
+(ROOT / "src" / "olympics.json").write_text(json_text + "\n")
 
+for table_name, rows in tables.items():
     csv_path = ROOT / "power-bi" / f"{table_name}.csv"
     with csv_path.open("w", newline="", encoding="utf-8-sig") as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=list(rows[0]))
@@ -157,7 +158,7 @@ for table_name, rows in tables.items():
         writer.writerows(rows)
 
 # ---------------------------------------------------------------------------
-# 4. Write totals that the app's tests are compared against
+# 4. Print totals that the app's tests are compared against
 # ---------------------------------------------------------------------------
 
 
@@ -194,5 +195,4 @@ summary = {
     "bySeason": by_season,
 }
 
-(ROOT / "docs" / "source-checks.json").write_text(json.dumps(summary, indent=2) + "\n")
 print(json.dumps(summary, indent=2))

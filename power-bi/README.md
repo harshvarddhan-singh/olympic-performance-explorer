@@ -51,7 +51,7 @@ For interview live changes, replacing the per-capita chart with a line chart is 
 
 ## 4. Check before saving PBIX
 
-Clear all slicers temporarily. Expected original totals: **9,529 athlete medals; 3,143 gold; 6,955 distinct medallists; 108 medal-winning countries**. Row count is 9,107 and is deliberately different from the medal total. Summer is 8,005, Winter 1,524. Reconcile each year with `../docs/source-checks.json`.
+Clear all slicers temporarily. Expected original totals: **9,529 athlete medals; 3,143 gold; 6,955 distinct medallists; 108 medal-winning countries**. Row count is 9,107 and is deliberately different from the medal total. Summer is 8,005, Winter 1,524. Reconcile each year with the totals printed by `../convert_excel.py`.
 
 United States total = 1,312; Australia = 609. Test Gold and Silver filters: the gold measure must respect Silver and show zero. Verify a country filter changes the population denominator. Restore Summer as the default, and save as `Olympic Performance Explorer.pbix`.
 

@@ -38,44 +38,38 @@ npm run format  # tidies the code layout with Prettier
 
 ## Where to find things
 
+The whole app is **eight code files in one folder**. Each tab on screen has its own file.
+
 ```
-index.html                 the single HTML page; React draws inside <div id="root">
 src/
-  main.tsx                 starts React
-  App.tsx                  state (user choices), header, navigation, page switch
-  App.css                  all styling, in 13 commented sections
-  types.ts                 TypeScript descriptions of all data shapes
-  data.ts                  loads the JSON tables and joins them by ID
-  calculations.ts          filtering, KPIs, rankings, trends (pure functions)
-  calculations.test.ts     tests that compare our numbers with the Excel workbook
-  insights.ts              writes the plain-English "What stands out" observations
-  scenarios.ts             validates, loads and saves what-if entries (localStorage)
-  pages/
-    OverviewPage.tsx       calculates and lays out the Overview screen
-    ComparePage.tsx        calculates and lays out the Compare screen
-  components/
-    DataNote.tsx           the warning about athlete medals
-    FilterBar.tsx          the five dropdowns
-    KpiCards.tsx           the four number cards (used on both pages)
-    TopCountriesChart.tsx  stacked bar chart
-    InsightSpotlight.tsx   shows the "What stands out" observations
-    EditionTrendChart.tsx  line chart (one line, or two when comparing)
-    TopAthletesTable.tsx   HTML table
-    ScenarioEditor.tsx     the form and list for what-if entries
-  data/                    six JSON files, one per Excel sheet
-scripts/convert_excel.py   creates the JSON (and Power BI CSV) files from Excel
-source/                    an unchanged copy of the workbook
-docs/                      interview guide and verification notes
-power-bi/                  CSV files, DAX measures and notes for the Power BI part
+  App.tsx              starts React; remembers the user's choices; header and tabs
+  Overview.tsx         the Overview tab (filters, bar chart, athletes table)
+  Compare.tsx          the Compare tab (two countries side by side)
+  Scenarios.tsx        the Scenarios tab (add / edit / delete what-if entries)
+  shared.tsx           KPI cards, line chart and "What stands out" panel (used by two tabs)
+  data.ts              data types, loading + joining the tables, saving scenarios
+  calculations.ts      every number and every "What stands out" sentence
+  calculations.test.ts tests that compare our numbers with the Excel workbook
+  styles.css           all styling, in commented sections
+  olympics.json        the six Excel sheets as data (made by convert_excel.py)
+
+index.html                    the single HTML page; React draws inside <div id="root">
+Olympic Games Dataset.xlsx    the original workbook, unchanged
+convert_excel.py              turns the workbook into olympics.json and the Power BI CSVs
+NOTES.md                      how to explain and demo the app, and how it was verified
+power-bi/                     CSV files, DAX measures and notes for the Power BI part
 ```
+
+The other files (`package.json`, `tsconfig.json`, `vite.config.ts`) are settings for
+the tools. You rarely need to open them.
 
 ## How the data flows
 
 ```
 Excel workbook
-   │  scripts/convert_excel.py (run once)
+   │  convert_excel.py (run once)
    ▼
-six JSON files in src/data
+src/olympics.json (six tables)
    │  data.ts joins them by ID
    ▼
 originalRows (9,107 readable rows, never changed)
@@ -117,8 +111,8 @@ calculated again from those choices each time something changes.
 Only needed if the workbook changes. Requires Python 3 with openpyxl:
 
 ```sh
-python3 -m pip install -r scripts/requirements.txt
-python3 scripts/convert_excel.py
+python3 -m pip install openpyxl
+python3 convert_excel.py
 npm test
 ```
 

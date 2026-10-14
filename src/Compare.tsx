@@ -1,20 +1,31 @@
-// ComparePage.tsx puts two countries side by side.
-// It reuses KpiCards and EditionTrendChart from the Overview page.
+// Compare.tsx is the "Compare" tab: two countries side by side.
+// It reuses KpiCards, EditionTrendChart and InsightSpotlight from shared.tsx.
 // Only the rows we give them are different.
 
 import {
   formatNumber,
+  getCompareInsight,
+  getCountryProfile,
   getEditionTrend,
   getKpis,
   getTopSports,
   getTotalAthleteMedals,
-} from '../calculations';
-import { countriesByName, events } from '../data';
-import type { CompareSelection, Country, MedalRow, Season } from '../types';
-import EditionTrendChart from '../components/EditionTrendChart';
-import KpiCards from '../components/KpiCards';
-import InsightSpotlight from '../components/InsightSpotlight';
-import { getCompareInsight, getCountryProfile } from '../insights';
+} from './calculations';
+import {
+  countriesByName,
+  events,
+  type Country,
+  type MedalRow,
+  type Season,
+} from './data';
+import { EditionTrendChart, InsightSpotlight, KpiCards } from './shared';
+
+// The three choices on the Compare page.
+export interface CompareSelection {
+  countryA: number; // country ID
+  countryB: number; // country ID
+  season: Season;
+}
 
 interface ComparePageProps {
   rows: MedalRow[];
