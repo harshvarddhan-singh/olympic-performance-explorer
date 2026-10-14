@@ -186,7 +186,7 @@ describe('scenarios', () => {
 
     expect(loadScenarios().rows).toEqual([]);
     expect(loadScenarios().message).not.toBe('');
-    expect(saveScenarios([])).toContain('only until');
+    expect(saveScenarios([])).toContain('lost when you reload');
 
     vi.unstubAllGlobals();
   });
@@ -200,24 +200,29 @@ describe('insights', () => {
 
   it('contrasts volume with population for the whole dataset', () => {
     const [scale, sport, team] = getOverviewInsights(originalRows, false);
-    // USA leads on volume; Australia is 30.05 per million vs 4.40 for the USA.
-    expect(scale.text).toContain('United States leads on volume with 1,312');
+    // USA has the most; Australia is 30.05 per million vs 4.40 for the USA.
+    expect(scale.text).toContain('The United States has the most athlete medals: 1,312');
     expect(scale.text).toContain(
-      'Australia records 30.05 athlete medals per million people—6.8 times the rate for United States (4.40)',
+      'Australia records 30.05 athlete medals per million people. That is 6.8 times the rate for the United States (4.40)',
     );
     // Netherlands relies most on one sport (Hockey 35.5%); China least (Diving 10.4%).
-    expect(sport.text).toContain('For Netherlands, Hockey provides 36%');
+    expect(sport.text).toContain(
+      'the Netherlands leans most on one sport: Hockey gives it 36%',
+    );
     expect(sport.text).toContain('China is the most spread out');
     // Team sports: 2,754 of 9,529 = 28.9%, from 39% (Netherlands) to 5% (UK).
-    expect(team.text).toContain('The nine selected team sports account for 29%');
-    expect(team.text).toContain('39% for Netherlands to 5% for United Kingdom');
+    expect(team.text).toContain('The nine selected team sports make up 29%');
+    expect(team.text).toContain('the Netherlands gets the most from team sports (39%)');
+    expect(team.text).toContain('the United Kingdom the least (5%)');
   });
 
   it('points to ice hockey in the Winter Games', () => {
     const [scale, sport] = getOverviewInsights(winter, false);
     // Canada and the USA both have 233 Winter athlete medals.
-    expect(scale.text).toContain('Canada and United States share the lead');
-    expect(sport.text).toContain('For Finland, Ice Hockey provides 63%');
+    expect(scale.text).toContain('Canada and the United States are joint top');
+    expect(sport.text).toContain(
+      'Finland leans most on one sport: Ice Hockey gives it 63%',
+    );
     expect(sport.caveat).toContain('team sport');
   });
 
@@ -242,7 +247,7 @@ describe('insights', () => {
     // Same volume (233 each), but gold is 149/233 = 64% vs 32/233 = 14%.
     expect(insight.text).toContain('the same number of athlete medals (233)');
     expect(insight.text).toContain('64% of athlete medals for Canada and 14%');
-    expect(insight.text).toContain('Similar totals can hide very different results.');
+    expect(insight.text).toContain('similar totals can hide very different results.');
     expect(insight.caveat).toContain('Ice Hockey');
   });
 

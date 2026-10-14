@@ -70,7 +70,7 @@ export default function ComparePage({
         <h2>{country.name}</h2>
         <p className="subtitle">
           {selection.season} Games ·{' '}
-          {hasMedals ? 'All available editions' : 'No athlete medals in this selection'}
+          {hasMedals ? 'All Games in the data' : 'No athlete medals in these Games'}
         </p>
 
         {/* Passing the country makes "medals per million" use only its population. */}
@@ -79,7 +79,7 @@ export default function ComparePage({
         <div className="panel">
           <h3>Top sports</h3>
           {topSports.length === 0 ? (
-            <p className="empty">No sport results.</p>
+            <p className="empty">No medals in any sport.</p>
           ) : (
             <ol className="sport-list">
               {topSports.map((item) => (
@@ -146,12 +146,12 @@ export default function ComparePage({
           </select>
         </label>
 
-        <p>Comparison uses its own selections.</p>
+        <p>These choices are separate from the Overview filters.</p>
       </section>
 
       {selection.countryA === selection.countryB && (
         <p className="chart-note">
-          Both selections are the same country. Pick another country to compare.
+          You picked the same country twice. Choose a different one for Country B.
         </p>
       )}
 
@@ -170,10 +170,7 @@ export default function ComparePage({
             <h2>
               {countryA.name} & {countryB.name} over time
             </h2>
-            <p>
-              {selection.season} athlete medals · zero means no medals recorded in this
-              dataset
-            </p>
+            <p>{selection.season} athlete medals · a zero means no medals in this data</p>
           </div>
         </div>
         <EditionTrendChart data={trend} names={[countryA.name, countryB.name]} />

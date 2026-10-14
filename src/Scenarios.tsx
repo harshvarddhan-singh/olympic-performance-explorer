@@ -72,7 +72,7 @@ export default function ScenarioEditor({ rows, onChange }: ScenarioEditorProps) 
 
     if (!isScenario(entry)) {
       setMessage(
-        `Choose valid fields and a whole medal count between 1 and ${MAX_MEDAL_COUNT.toLocaleString('en-US')}.`,
+        `Please enter a whole number of medals between 1 and ${MAX_MEDAL_COUNT.toLocaleString('en-US')}.`,
       );
       return;
     }
@@ -80,12 +80,12 @@ export default function ScenarioEditor({ rows, onChange }: ScenarioEditorProps) 
     if (isEditing) {
       // Replace the old entry with the edited one and keep all the others.
       onChange(rows.map((row) => (row.id === entry.id ? entry : row)));
-      setMessage('Scenario updated.');
+      setMessage('Changes saved.');
     } else {
       // Make a new array with the new entry at the end.
       // We never change the old array directly. React needs a new one to notice the change.
       onChange([...rows, entry]);
-      setMessage('Scenario added. Turn on “Include scenarios” to see its effect.');
+      setMessage('Added. Switch on “Include scenarios” to see it in the charts.');
     }
 
     setDraft(createEmptyDraft());
@@ -94,7 +94,7 @@ export default function ScenarioEditor({ rows, onChange }: ScenarioEditorProps) 
   function handleEdit(row: Scenario) {
     // Copy the row into the form.
     setDraft({ ...row });
-    setMessage('Editing the selected scenario.');
+    setMessage('You are now editing this entry.');
   }
 
   function handleDelete(row: Scenario) {
@@ -104,7 +104,7 @@ export default function ScenarioEditor({ rows, onChange }: ScenarioEditorProps) 
     if (draft.id === row.id) {
       setDraft(createEmptyDraft());
     }
-    setMessage('Scenario deleted.');
+    setMessage('Entry deleted.');
   }
 
   function handleCancel() {
@@ -123,7 +123,10 @@ export default function ScenarioEditor({ rows, onChange }: ScenarioEditorProps) 
       <div className="panel-heading">
         <div>
           <h2>Try a what-if result</h2>
-          <p>Hypothetical athlete medals, kept separately from the original workbook.</p>
+          <p>
+            Add made-up medals to see how the numbers would change. The real data is never
+            touched.
+          </p>
         </div>
         <span className="pill">
           {rows.length} saved {rows.length === 1 ? 'entry' : 'entries'}
@@ -131,9 +134,9 @@ export default function ScenarioEditor({ rows, onChange }: ScenarioEditorProps) 
       </div>
 
       <p className="scenario-note">
-        Choose a country, edition and sport, then add a medal count. Scenarios have no
-        athlete attached, so they never add distinct medallists or appear in the athletes
-        table. Saved only in this browser.
+        Pick a country, Games and sport, then enter how many medals to add. These entries
+        have no athlete, so they never change the medallist count or the athletes table.
+        They are saved in this browser only.
       </p>
 
       {/* ----- The form ----- */}
@@ -231,7 +234,7 @@ export default function ScenarioEditor({ rows, onChange }: ScenarioEditorProps) 
       {/* ----- The list of saved scenarios ----- */}
       {rows.length === 0 ? (
         <div className="empty">
-          No scenarios yet. Add one above to explore how a result changes the charts.
+          No what-if entries yet. Add one above to see how it changes the charts.
         </div>
       ) : (
         <div className="table-scroll">

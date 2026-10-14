@@ -121,16 +121,16 @@ together. That is acceptable for a dataset of this size.
 Run in headless Chromium at 1440, 900 and 390 pixels wide, with no console errors or
 warnings.
 
-| Step                       | Athlete medals | Gold  | Medallists | Per million                    |
-| -------------------------- | -------------- | ----- | ---------- | ------------------------------ |
-| Start                      | 9,529          | 3,143 | 6,955      | 1.72                           |
-| Summer                     | 8,005          | 2,631 | 5,910      | 1.45                           |
-| Summer + Ice Hockey        | 0              | 0     | 0          | — (empty-state messages shown) |
-| Region Oceania + Gold      | 181            | 181   | 149        | 7.44                           |
-| Compare, Summer: Germany   | 460            | 159   | 335        | 5.58                           |
-| Compare, Summer: Australia | 602            | 158   | 410        | 29.71                          |
-| Compare, Winter: Norway    | 103            | 41    | 57         | 22.34                          |
-| Scenario +3 gold included  | 9,532          | 3,146 | 6,955      | 1.72                           |
+| Step                       | Athlete medals | Gold  | Medallists | Per million                      |
+| -------------------------- | -------------- | ----- | ---------- | -------------------------------- |
+| Start                      | 9,529          | 3,143 | 6,955      | 1.72                             |
+| Summer                     | 8,005          | 2,631 | 5,910      | 1.45                             |
+| Summer + Ice Hockey        | 0              | 0     | 0          | n/a (empty-state messages shown) |
+| Region Oceania + Gold      | 181            | 181   | 149        | 7.44                             |
+| Compare, Summer: Germany   | 460            | 159   | 335        | 5.58                             |
+| Compare, Summer: Australia | 602            | 158   | 410        | 29.71                            |
+| Compare, Winter: Norway    | 103            | 41    | 57         | 22.34                            |
+| Scenario +3 gold included  | 9,532          | 3,146 | 6,955      | 1.72                             |
 
 Also checked: filters are kept when switching pages; a count of 1.5 is rejected;
 editing a scenario to 5 survives a page reload; "Include scenarios" is off again after

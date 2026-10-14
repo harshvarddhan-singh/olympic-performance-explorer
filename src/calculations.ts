@@ -351,6 +351,31 @@ function percent(part: number, whole: number): number {
   return (part / whole) * 100;
 }
 
+// Some country names need "the" or a different word order inside a sentence.
+// For example the workbook says "Korea, South", but people write "South Korea".
+// Only countries that won medals are listed here.
+const SENTENCE_NAMES: Record<string, string> = {
+  'Bahamas, The': 'the Bahamas',
+  'Czech Republic': 'the Czech Republic',
+  'Dominican Republic': 'the Dominican Republic',
+  'Korea, North': 'North Korea',
+  'Korea, South': 'South Korea',
+  Netherlands: 'the Netherlands',
+  'United Arab Emirates': 'the United Arab Emirates',
+  'United Kingdom': 'the United Kingdom',
+  'United States': 'the United States',
+};
+
+// "United States" -> "the United States". Other names stay as they are.
+function sentenceName(name: string): string {
+  return SENTENCE_NAMES[name] ?? name;
+}
+
+// Capital first letter, for a name at the start of a sentence: "the USA" -> "The USA".
+function capitalise(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 // 26.8 -> "27%". Whole numbers read more naturally in a sentence.
 function rounded(share: number): string {
   return `${Math.round(share)}%`;
@@ -361,7 +386,7 @@ function rounded(share: number): string {
 // ---------------------------------------------------------------------------
 
 export interface CountryProfile {
-  name: string;
+  name: string; // written the way it reads in a sentence, e.g. "the United States"
   total: number;
   gold: number;
   perMillion: number | null;
@@ -399,7 +424,7 @@ export function getCountryProfile(rows: MedalRow[], country: Country): CountryPr
   }
 
   return {
-    name: country.name,
+    name: sentenceName(country.name),
     total: total,
     gold: gold,
     perMillion: getMedalsPerMillion(rows, country),
@@ -463,28 +488,28 @@ function scaleVersusPopulation(
   }
 
   const caveat =
-    'Per million uses one population snapshot, so it is a comparison indicator, ' +
-    'not an exact rate for each Games.';
+    'The population figure is from one year only, so treat "per million" as a rough ' +
+    'comparison, not an exact rate for each Games.';
 
   // Two countries can share first place (for example Canada and the USA in Winter).
   const second = top[1];
   const sharedLead = second.total === leader.total;
   let volumeText =
-    `${leader.name} leads on volume with ${formatNumber(leader.total)} athlete medals ` +
-    `(${rounded(percent(leader.total, selectionTotal))} of this selection).`;
+    `${capitalise(leader.name)} has the most athlete medals: ${formatNumber(leader.total)}, ` +
+    `or ${rounded(percent(leader.total, selectionTotal))} of all those shown.`;
   if (sharedLead) {
     volumeText =
-      `${leader.name} and ${second.name} share the lead on volume with ` +
+      `${capitalise(leader.name)} and ${second.name} are joint top with ` +
       `${formatNumber(leader.total)} athlete medals each.`;
   }
 
   // Case A: the same country leads on both measures.
   if (efficient.name === leader.name) {
     return {
-      title: 'Big and efficient',
+      title: 'Top on both counts',
       text:
-        `${volumeText} ${leader.name} also has the most athlete medals per million ` +
-        `people among ${groupName(top)}, so here scale and efficiency point the same way.`,
+        `${volumeText} ${capitalise(leader.name)} also wins the most medals per million people ` +
+        `of ${groupName(top)}, so here the total and the population view agree.`,
       caveat: caveat,
     };
   }
@@ -492,12 +517,12 @@ function scaleVersusPopulation(
   // Case B: different leaders. Compare their population-adjusted rates precisely.
   const times = (efficient.perMillion / leader.perMillion).toFixed(1);
   return {
-    title: 'Scale is not the same as efficiency',
+    title: 'Biggest total, or best for its size?',
     text:
       `${volumeText} After adjusting for population, ${efficient.name} records ` +
-      `${efficient.perMillion.toFixed(2)} athlete medals per million people—${times} times ` +
-      `the rate for ${leader.name} (${leader.perMillion.toFixed(2)}). ` +
-      'Which country looks "best" depends on the question being asked.',
+      `${efficient.perMillion.toFixed(2)} athlete medals per million people. That is ` +
+      `${times} times the rate for ${leader.name} (${leader.perMillion.toFixed(2)}). ` +
+      'So which country looks "best" depends on what you measure.',
     caveat: caveat,
   };
 }
@@ -517,21 +542,21 @@ function sportDependence(top: CountryProfile[]): Insight | null {
 
   // The caveat depends on whether the biggest sport is a team sport.
   let caveat =
-    'A high share can mean a real specialist strength, but it also means the total ' +
-    'depends heavily on how well one sport goes.';
+    'Leaning on one sport can mean real strength in it, but one bad Games in that ' +
+    'sport would pull the total down a lot.';
   if (TEAM_SPORTS.includes(narrowest.topSport)) {
     caveat =
-      `${narrowest.topSport} is a team sport, and every squad member gets a medal record, ` +
-      'so a single tournament result can add dozens of athlete medals.';
+      `${narrowest.topSport} is a team sport. Every player on the team gets a medal ` +
+      'here, so one tournament can add dozens of athlete medals.';
   }
 
   return {
     title: 'One sport or many?',
     text:
-      `For ${narrowest.name}, ${narrowest.topSport} provides ${rounded(narrowest.topSportShare)} ` +
-      `of its athlete medals, the highest reliance on one sport among ${groupName(top)}. ` +
-      `${broadest.name} is the most spread out: its biggest sport ` +
-      `(${broadest.topSport}) provides only ${rounded(broadest.topSportShare)}.`,
+      `Of ${groupName(top)}, ${narrowest.name} leans most on one sport: ` +
+      `${narrowest.topSport} gives it ${rounded(narrowest.topSportShare)} of its athlete ` +
+      `medals. ${capitalise(broadest.name)} is the most spread out. Its biggest sport, ` +
+      `${broadest.topSport}, gives only ${rounded(broadest.topSportShare)}.`,
     caveat: caveat,
   };
 }
@@ -558,18 +583,19 @@ function teamSportEffect(
   if (most.name === least.name) return null;
 
   return {
-    title: 'Team sports change the picture',
+    title: 'Team sports make some totals bigger',
     text:
-      `The nine selected team sports account for ` +
-      `${rounded(percent(teamTotal, selectionTotal))} of athlete-medal records here. ` +
-      `Among ${groupName(top)} this ranges from ${rounded(most.teamSportShare)} for ${most.name} to ` +
-      `${rounded(least.teamSportShare)} for ${least.name}. Because every player is counted, ` +
-      'team-sport countries look larger here than in the official medal table, and ' +
-      'countries that win mostly individual events look smaller.',
+      `The nine selected team sports make up ` +
+      `${rounded(percent(teamTotal, selectionTotal))} of the athlete medals shown. ` +
+      `Of ${groupName(top)}, ${most.name} gets the most from team sports ` +
+      `(${rounded(most.teamSportShare)}) and ${least.name} the least ` +
+      `(${rounded(least.teamSportShare)}). Because every player counts, countries that ` +
+      'are good at team sports look bigger here than in the official medal table. ' +
+      'Countries that win mostly in individual events look smaller.',
     caveat:
-      'Team sports here means football, hockey, ice hockey, handball, water polo, ' +
-      'basketball, volleyball, baseball and softball. Relays and rowing crews add ' +
-      'several records too, so the real effect is a little larger.',
+      'By team sports we mean football, hockey, ice hockey, handball, water polo, ' +
+      'basketball, volleyball, baseball and softball. Relays and rowing crews also ' +
+      'count several people per medal, so the real effect is a bit bigger.',
   };
 }
 
@@ -614,13 +640,13 @@ export function getCompareInsight(a: CountryProfile, b: CountryProfile): Insight
   let volumeLeader: CountryProfile | null = null;
   if (a.total === b.total) {
     sentences.push(
-      `${a.name} and ${b.name} have the same number of athlete medals (${formatNumber(a.total)}).`,
+      `${capitalise(a.name)} and ${b.name} have the same number of athlete medals (${formatNumber(a.total)}).`,
     );
   } else {
     volumeLeader = a.total > b.total ? a : b;
     const other = volumeLeader === a ? b : a;
     sentences.push(
-      `${volumeLeader.name} has more athlete medals ` +
+      `${capitalise(volumeLeader.name)} has more athlete medals ` +
         `(${formatNumber(volumeLeader.total)} vs ${formatNumber(other.total)}).`,
     );
   }
@@ -634,7 +660,9 @@ export function getCompareInsight(a: CountryProfile, b: CountryProfile): Insight
     if (volumeLeader === null) {
       sentences.push(`Per million people, ${efficient.name} is ahead ${numbers}.`);
     } else if (efficient === volumeLeader) {
-      sentences.push(`${efficient.name} also leads per million people ${numbers}.`);
+      sentences.push(
+        `${capitalise(efficient.name)} is also ahead per million people ${numbers}.`,
+      );
     } else {
       sentences.push(`But per million people, ${efficient.name} is ahead ${numbers}.`);
     }
@@ -652,18 +680,19 @@ export function getCompareInsight(a: CountryProfile, b: CountryProfile): Insight
     const similarTotals = Math.abs(a.total - b.total) <= 0.1 * Math.max(a.total, b.total);
     const goldGap = Math.abs(percent(a.gold, a.total) - percent(b.gold, b.total));
     if (similarTotals && goldGap >= 20) {
-      sentences.push('Similar totals can hide very different results.');
+      sentences.push('So two similar totals can hide very different results.');
     }
   }
 
   // The caveat warns about team sports when one of them dominates a country's total.
   let caveat =
-    'Per million uses one population snapshot, so treat it as a comparison indicator.';
+    'The population figure is from one year only, so treat "per million" as a rough ' +
+    'comparison.';
   for (const profile of [a, b]) {
     if (profile.total > 0 && TEAM_SPORTS.includes(profile.topSport)) {
       caveat =
-        `${profile.topSport} provides ${rounded(profile.topSportShare)} of the athlete medals for ` +
-        `${profile.name}. It is a team sport, so one tournament result counts once per ` +
+        `${profile.topSport} gives ${profile.name} ${rounded(profile.topSportShare)} of ` +
+        'its athlete medals. It is a team sport, so one tournament counts once for every ' +
         'player and can move these numbers a lot.';
       break;
     }

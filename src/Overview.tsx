@@ -174,9 +174,7 @@ interface TopCountriesChartProps {
 function TopCountriesChart({ data }: TopCountriesChartProps) {
   // Show a friendly message instead of an empty chart.
   if (data.length === 0) {
-    return (
-      <p className="empty">No results for this selection. Try resetting the filters.</p>
-    );
+    return <p className="empty">Nothing matches these filters. Try resetting them.</p>;
   }
 
   return (
@@ -275,7 +273,7 @@ interface TopAthletesTableProps {
 
 function TopAthletesTable({ athletes }: TopAthletesTableProps) {
   if (athletes.length === 0) {
-    return <p className="empty">No known medallists match this selection.</p>;
+    return <p className="empty">No athletes match these filters.</p>;
   }
 
   return (
@@ -362,10 +360,10 @@ export default function OverviewPage({
       <FilterBar filters={filters} onChange={onFiltersChange} />
 
       <div className="section-line">
-        <h2>Performance at a glance</h2>
+        <h2>Headline numbers</h2>
         <span>
           {winningCountryCount} medal-winning countries ·{' '}
-          {includeScenarios ? 'Includes scenarios' : 'Original data'}
+          {includeScenarios ? 'Includes your what-if entries' : 'Original data only'}
         </span>
       </div>
 
@@ -379,7 +377,10 @@ export default function OverviewPage({
           <div className="panel-heading">
             <div>
               <h2>Top countries</h2>
-              <p>Top 10 by athlete medals · split by medal type</p>
+              <p>
+                The 10 countries with the most athlete medals, split into gold, silver and
+                bronze
+              </p>
             </div>
             <span className="pill">Ranking</span>
           </div>
@@ -390,15 +391,16 @@ export default function OverviewPage({
         <section className="panel">
           <div className="panel-heading">
             <div>
-              <h2>Medals by Olympic edition</h2>
-              <p>Athlete medals across the selected Games</p>
+              <h2>Athlete medals at each Games</h2>
+              <p>One point for each Games that matches your filters</p>
             </div>
           </div>
 
           {showBothSeasons ? (
             <>
               <p className="chart-note">
-                Summer and Winter have separate lines to keep comparisons meaningful.
+                Summer and Winter are shown apart because the Summer Games are much
+                bigger.
               </p>
               {seasons.map((season) => (
                 <div key={season}>
@@ -423,14 +425,15 @@ export default function OverviewPage({
         <div className="panel-heading">
           <div>
             <h2>Top athletes</h2>
-            <p>Top 10 known athlete IDs in the current selection</p>
+            <p>The 10 athletes with the most medals for your filters</p>
           </div>
-          <span className="pill">Original records only</span>
+          <span className="pill">Original athlete records</span>
         </div>
         <TopAthletesTable athletes={topAthletes} />
         <p className="footnote">
-          Ranked by source athlete ID. The workbook may merge people with the same name.
-          Five original rows have no athlete ID.
+          Athletes are counted by their workbook ID, not by name. People who share a name
+          may not be distinguishable in the source data. Five medal rows have no athlete
+          ID and are left out.
         </p>
       </section>
     </>

@@ -309,8 +309,8 @@ export function loadScenarios(): SavedScenarios {
     return {
       rows: [],
       message:
-        'Saved scenarios could not be read. Original data is available. ' +
-        'Saving a new entry will replace the unreadable saved data.',
+        'Your saved what-if entries could not be read, so they are not shown. ' +
+        'The original data still works. Adding a new entry will replace the old list.',
     };
   }
 }
@@ -321,6 +321,6 @@ export function saveScenarios(rows: Scenario[]): string {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
     return '';
   } catch {
-    return 'Browser storage is unavailable. These changes will last only until you reload this page.';
+    return 'This browser is not letting the app save. Your changes will be lost when you reload the page.';
   }
 }

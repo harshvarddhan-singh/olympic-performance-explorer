@@ -36,16 +36,17 @@ interface KpiCardsProps {
 }
 
 export function KpiCards({ values, comparison = false }: KpiCardsProps) {
-  // The per-million value can be missing, so we show a dash in that case.
-  let perMillionText = '—';
+  // The per-million value can be missing, so we show "n/a" (not available) in that case.
+  let perMillionText = 'n/a';
   if (values.perMillion !== null) {
     perMillionText = values.perMillion.toFixed(2);
   }
 
   // The explanation under "Medals per million" depends on the page.
-  let perMillionDetail = 'Uses combined population of selected medal-winning countries';
+  let perMillionDetail =
+    'Athlete medals divided by the combined population of medal-winning countries';
   if (comparison) {
-    perMillionDetail = 'Uses this country’s population snapshot';
+    perMillionDetail = 'Based on one population figure for this country';
   }
 
   // We describe the four cards as data, then draw them with one loop below.
@@ -53,20 +54,20 @@ export function KpiCards({ values, comparison = false }: KpiCardsProps) {
     {
       label: 'Athlete medals',
       value: formatNumber(values.total),
-      detail: 'Sum of medals won, including team members',
+      detail: 'Counts every medal-winning athlete, including each team member',
     },
     {
       label: 'Gold athlete medals',
       value: formatNumber(values.gold),
-      detail: `${formatShare(values.gold, values.total)}% of selected athlete medals`,
+      detail: `${formatShare(values.gold, values.total)}% of the athlete medals shown`,
     },
     {
       label: 'Distinct medallists',
       value: formatNumber(values.medallists),
-      detail: 'Known athlete IDs; excludes scenario rows',
+      detail: 'Different athlete IDs with medals (what-if entries not included)',
     },
     {
-      label: 'Medals per million',
+      label: 'Medals per million people',
       value: perMillionText,
       detail: perMillionDetail,
     },
@@ -102,7 +103,7 @@ interface EditionTrendChartProps {
 
 export function EditionTrendChart({ data, names }: EditionTrendChartProps) {
   if (data.length === 0) {
-    return <p className="empty">No Olympic editions in this selection.</p>;
+    return <p className="empty">No Games match these filters.</p>;
   }
 
   return (

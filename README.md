@@ -104,7 +104,7 @@ calculated again from those choices each time something changes.
 - Overview: selected medals ÷ combined population of the countries that won medals in
   the selection × 1,000,000. Each country's population is counted once.
 - Compare: the country's medals ÷ that country's population × 1,000,000.
-- If a population is missing, the card shows "—".
+- If a population is missing, the card shows "n/a".
 
 ## Changing the Excel data
 

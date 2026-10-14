@@ -99,7 +99,7 @@ function App() {
           <span>OLYMPIC EXPLORER</span>
         </div>
         <span className="header-meta">
-          Dataset study <span>2000—2012</span>
+          Olympic Games <span>2000 to 2012</span>
         </span>
       </header>
 
@@ -107,15 +107,16 @@ function App() {
         {/* ----- Title area ----- */}
         <section className="intro">
           <div className="hero-copy">
-            <p className="eyebrow">SEVEN GAMES. MANY PERSPECTIVES.</p>
+            <p className="eyebrow">SUMMER AND WINTER GAMES</p>
             <h1>Olympic Performance Explorer</h1>
             <p className="subtitle">
-              Explore the countries, athletes and sports behind the results.
+              See which countries and athletes won medals, and compare two countries side
+              by side.
             </p>
             <div className="hero-chips" aria-label="Dataset coverage">
-              <span>2000—2012</span>
+              <span>2000 to 2012</span>
               <span>49 sports</span>
-              <span>108 medal-winning countries</span>
+              <span>108 countries with medals</span>
             </div>
           </div>
           <div className="coverage">
@@ -133,9 +134,9 @@ function App() {
             i
           </span>
           <p>
-            <strong>Athlete medals, not the official medal table.</strong> Team members
-            each contribute medals. Population is a single snapshot, not a value for each
-            Olympic year.
+            <strong>These are athlete medals, not the official medal table.</strong> When
+            a team wins a medal, it is counted once for every player on that team. Each
+            country also has just one population figure, not one for every Games.
           </p>
         </div>
 
@@ -179,8 +180,8 @@ function App() {
 
         {includeScenarios && (
           <p className="scenario-banner">
-            Scenario mode · Original data + {scenarioCount} hypothetical{' '}
-            {scenarioCount === 1 ? 'entry' : 'entries'}. Filters still apply.
+            Showing the original data plus your {scenarioCount} what-if{' '}
+            {scenarioCount === 1 ? 'entry' : 'entries'}. The filters still apply.
           </p>
         )}
 
@@ -209,7 +210,7 @@ function App() {
 
         <footer>
           <span>Source: Olympic Games Dataset.xlsx</span>
-          <span>2000–2012 · Population snapshot · Athlete medals</span>
+          <span>2000 to 2012 · Athlete medals, not official medal counts</span>
         </footer>
       </main>
     </>
