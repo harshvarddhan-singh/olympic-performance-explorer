@@ -1,0 +1,7 @@
+{
+  "name": "Olympic Explorer",
+  "dataColors": ["#176650", "#6c64a7", "#c69a35", "#94a6ae", "#ae7251"],
+  "background": "#f5f7f4",
+  "foreground": "#24382f",
+  "tableAccent": "#176650"
+}

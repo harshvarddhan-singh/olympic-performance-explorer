@@ -1,0 +1,43 @@
+// Add these one at a time using Modeling > New measure.
+// Table and column names match the supplied CSV files.
+
+Athlete Medals = COALESCE(SUM(medals[count]), 0)
+
+Gold Athlete Medals =
+COALESCE(
+    CALCULATE([Athlete Medals], KEEPFILTERS(medalTypes[name] = "Gold")),
+    0
+)
+
+Gold Share = DIVIDE([Gold Athlete Medals], [Athlete Medals], 0)
+
+Distinct Medallists =
+COALESCE(DISTINCTCOUNTNOBLANK(medals[athleteId]), 0)
+
+Medal-winning Countries =
+COALESCE(DISTINCTCOUNT(medals[countryId]), 0)
+
+// Fact filters do not flow back to dimensions in a single-direction star model.
+// TREATAS explicitly restricts population to countries present in filtered medals.
+Medals per Million =
+VAR WinningIDs = VALUES(medals[countryId])
+VAR WinningCountries =
+    CALCULATETABLE(countries, KEEPFILTERS(TREATAS(WinningIDs, countries[id])))
+VAR MissingPopulation =
+    COUNTROWS(FILTER(WinningCountries, ISBLANK(countries[population]) || countries[population] <= 0))
+VAR WinningPopulation = SUMX(WinningCountries, countries[population])
+RETURN
+    IF(MissingPopulation > 0, BLANK(), DIVIDE([Athlete Medals] * 1000000, WinningPopulation))
+
+// Optional country-only card: returns zero for a selected country with no medals.
+Country Medals per Million =
+IF(
+    HASONEVALUE(countries[id]),
+    DIVIDE([Athlete Medals] * 1000000, SELECTEDVALUE(countries[population]))
+)
+
+// Recommended for the per-million bar chart. Without it, countries with very few
+// athlete medals and tiny populations top the ranking (e.g. Bahamas, 24 medals).
+// Not yet run in Power BI Desktop.
+Medals per Million (50+ medals) =
+IF([Athlete Medals] >= 50, [Medals per Million])

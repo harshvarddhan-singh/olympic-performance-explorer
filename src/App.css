@@ -1,0 +1,1153 @@
+/*  App.css holds all the styling of the app in one file.
+   The sections follow the order of the page, from top to bottom.
+   Each class name here matches a className="..." in a .tsx file.  */
+
+/*  ==========================================================================
+   1. COLOURS AND BASIC ELEMENTS
+   The variables in :root (for example --blue) are colours we reuse everywhere.
+   Change a colour here and it changes in the whole app.
+   ==========================================================================  */
+:root {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  color: var(--ink);
+  background: #f4f7fa;
+  font-synthesis: none;
+  font-weight: 400;
+  line-height: 1.5;
+  --blue: #0085c7;
+  --yellow: #f4c300;
+  --black: #1f2933;
+  --green: #009f3d;
+  --red: #df0024;
+  --ink: #142536;
+  --muted: #657687;
+  --surface: #fff;
+  --line: #dde6ec;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 8% 0, #e6f4fb 0, transparent 27%),
+    radial-gradient(circle at 92% 12%, #fff4d4 0, transparent 22%), #f4f7fa;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+select,
+input {
+  border: 1px solid #cdd7d0;
+  border-radius: 6px;
+  background: white;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  padding: 9px 15px;
+  font-weight: 600;
+}
+
+button:hover {
+  background: #edf3ef;
+}
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+summary:focus-visible,
+a:focus-visible {
+  outline: 3px solid #598bde;
+  outline-offset: 3px;
+}
+
+select,
+input[type='number'] {
+  height: 42px;
+  padding: 8px 10px;
+  width: 100%;
+  min-width: 0;
+}
+
+label {
+  font-size: 12px;
+  font-weight: 650;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #516258;
+}
+
+p,
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -1.2px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.3px;
+}
+
+h3 {
+  font-size: 14px;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--ink);
+}
+
+main {
+  max-width: 1400px;
+  margin: auto;
+  padding: 36px 48px 0;
+}
+
+/*  ==========================================================================
+   2. TOP BAR (logo rings and the year badge)
+   ==========================================================================  */
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: -80px;
+  background: white;
+  padding: 10px;
+  z-index: 10;
+}
+
+.skip-link:focus {
+  top: 10px;
+}
+
+.site-header {
+  height: 72px;
+  background: #fff;
+  border-bottom: 1px solid #dbe5eb;
+  padding: 0 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 4px 18px rgba(24, 47, 65, 0.05);
+}
+
+.site-header:before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--blue) 0 20%,
+    var(--yellow) 20% 40%,
+    var(--black) 40% 60%,
+    var(--green) 60% 80%,
+    var(--red) 80%
+  );
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 1.6px;
+  color: #183247;
+}
+
+.rings-mark {
+  position: relative;
+  width: 67px;
+  height: 31px;
+  display: inline-block;
+  flex: 0 0 67px;
+}
+
+.rings-mark span {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 3px solid;
+  border-radius: 50%;
+  top: 0;
+}
+
+.rings-mark span:nth-child(1) {
+  left: 0;
+  border-color: var(--blue);
+}
+
+.rings-mark span:nth-child(2) {
+  left: 22px;
+  border-color: var(--black);
+}
+
+.rings-mark span:nth-child(3) {
+  left: 44px;
+  border-color: var(--red);
+}
+
+.rings-mark span:nth-child(4) {
+  left: 11px;
+  top: 10px;
+  border-color: var(--yellow);
+}
+
+.rings-mark span:nth-child(5) {
+  left: 33px;
+  top: 10px;
+  border-color: var(--green);
+}
+
+.header-meta {
+  display: flex;
+  gap: 25px;
+  color: #7b8994;
+  font-size: 12px;
+}
+
+.header-meta span {
+  font-weight: 650;
+  color: #183d56;
+  background: #edf6fb;
+  padding: 5px 9px;
+  border-radius: 20px;
+}
+
+/*  ==========================================================================
+   3. TITLE AREA (the dark blue box with the page title)
+   ==========================================================================  */
+.intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin: 8px 0 24px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, #071f33 0, #0b4162 62%, #096692 100%);
+  border-radius: 18px;
+  padding: 36px 40px;
+  color: #fff;
+  box-shadow: 0 18px 44px rgba(8, 55, 83, 0.18);
+}
+
+.intro:after {
+  content: '';
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  border: 46px solid rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  right: -60px;
+  top: -86px;
+}
+
+.intro h1 {
+  color: #fff;
+  font-size: clamp(31px, 3.3vw, 44px);
+  letter-spacing: -1.5px;
+}
+
+.intro .subtitle {
+  color: #d6e8f1;
+  font-size: 15px;
+}
+
+.intro .eyebrow {
+  color: #f8cf36;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.hero-chips span {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: #eaf6fb;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 6px 10px;
+  border-radius: 20px;
+}
+
+.eyebrow {
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 1.9px;
+  color: #527261;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6c7b71;
+  margin-top: 9px;
+}
+
+.coverage {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-left: 1px solid #ced9d0;
+  padding-left: 25px;
+  min-width: 200px;
+  position: relative;
+  z-index: 1;
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.coverage strong {
+  font-size: 48px;
+  line-height: 1.1;
+  font-weight: 500;
+  color: #f8cf36;
+}
+
+.coverage span {
+  font-size: 12px;
+  color: #d6e8f1;
+  line-height: 1.9;
+}
+
+/*  ==========================================================================
+   4. DATA NOTE (the yellow information box)
+   ==========================================================================  */
+.data-note {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: #fffaf0;
+  border: 1px solid #d9e4d7;
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 12px;
+  color: #6d5d31;
+  border-color: #f4df9d;
+  box-shadow: 0 6px 18px rgba(91, 72, 10, 0.04);
+}
+
+.data-note strong {
+  color: #574616;
+}
+
+.note-icon {
+  border: 1px solid #7b9375;
+  border-radius: 50%;
+  min-width: 18px;
+  text-align: center;
+  line-height: 16px;
+  font-size: 12px;
+  font-family: Georgia, serif;
+  border-color: #d1aa2a;
+  color: #9b7910;
+  background: #fff;
+}
+
+/*  ==========================================================================
+   5. NAVIGATION (Overview / Compare / Scenarios buttons and the scenario switch)
+   ==========================================================================  */
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #d7dfd8;
+  margin-top: 24px;
+  margin-bottom: 25px;
+  gap: 15px;
+}
+
+.navigation nav {
+  display: flex;
+  gap: 25px;
+}
+
+.navigation nav button {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 14px 1px;
+  color: #738076;
+  font-size: 13px;
+  border-bottom: 3px solid transparent;
+}
+
+.navigation nav button.active {
+  color: var(--blue);
+  border-color: var(--blue);
+}
+
+.toggle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.toggle input {
+  accent-color: var(--blue);
+  width: 16px;
+  height: 16px;
+}
+
+.pill {
+  display: inline-block;
+  background: #eef6fb;
+  border: 1px solid #dfe7df;
+  border-radius: 5px;
+  padding: 3px 8px;
+  color: #267092;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-color: #d5e8f2;
+}
+
+.nav-count {
+  margin-left: 7px;
+  font-size: 10px;
+  background: #e0eade;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+/*  ==========================================================================
+   6. FILTER BAR (the dropdowns)
+   ==========================================================================  */
+.filters {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr 1.4fr 1.2fr 1fr auto;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid #e0e6e0;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 28px;
+  align-items: end;
+}
+
+.filters select,
+.filters input {
+  border-color: #ccd9e1;
+}
+
+.text-button {
+  border: 0;
+  background: none;
+  color: #006fa8;
+  font-size: 12px;
+}
+
+.reset {
+  height: 42px;
+  white-space: nowrap;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+/*  ==========================================================================
+   7. KPI CARDS (the four big numbers) AND THE INSIGHT SENTENCE
+   .kpis is a CSS Grid with four equal columns.
+   ==========================================================================  */
+.section-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 14px;
+}
+
+.section-line h2 {
+  font-size: 15px;
+}
+
+.section-line span {
+  font-size: 11px;
+  color: #78847a;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.kpi {
+  background: white;
+  border: 1px solid #dfe6df;
+  border-radius: 12px;
+  padding: 21px 20px 18px;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.kpi h3 {
+  font-size: 11px;
+  font-weight: 600;
+  color: #637583;
+  margin-bottom: 10px;
+}
+
+.kpi strong {
+  font-size: 34px;
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -1px;
+  color: #123b57;
+}
+
+.kpi p {
+  font-size: 10px;
+  color: #7c897e;
+  line-height: 1.6;
+  margin-top: 12px;
+  max-width: 230px;
+}
+
+.kpi:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 13px 30px rgba(19, 48, 69, 0.1);
+}
+
+.kpi:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 4px;
+  background: var(--blue);
+}
+
+.kpi-2:before {
+  background: var(--yellow);
+}
+
+.kpi-3:before {
+  background: var(--green);
+}
+
+.kpi-4:before {
+  background: var(--red);
+}
+
+.kpi-2 strong {
+  color: #997700;
+}
+
+.kpi-3 strong {
+  color: #087c36;
+}
+
+.kpi-4 strong {
+  color: #bd1731;
+}
+
+.insight {
+  margin: 20px 0;
+  font-size: 12px;
+  color: #496679;
+  background: #eef7fb;
+  border-left: 4px solid var(--blue);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 14px;
+}
+
+.insight > span {
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  font-weight: 700;
+  color: #7d907e;
+  margin-right: 12px;
+}
+
+.insight strong {
+  color: #123b57;
+}
+
+/*  ==========================================================================
+   8. PANELS AND CHARTS (the white boxes that hold charts and tables)
+   ==========================================================================  */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #dfe6df;
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 22px;
+  min-width: 0;
+}
+
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.panel-heading h2 {
+  font-size: 16px;
+}
+
+.panel-heading p {
+  font-size: 11px;
+  color: #7c887e;
+  margin-top: 5px;
+}
+
+.filters,
+.panel,
+.kpi {
+  border-color: var(--line);
+  box-shadow: 0 8px 24px rgba(19, 48, 69, 0.055);
+}
+
+.country-chart {
+  height: 446px;
+}
+
+.trend-chart {
+  height: 230px;
+}
+
+.season-heading {
+  font-size: 11px;
+  margin: 7px 0;
+  color: #6a7c6f;
+}
+
+.overview-grid .trend-chart {
+  height: 160px;
+}
+
+.chart {
+  font-size: 11px;
+  width: 100%;
+  min-width: 0;
+}
+
+.chart-note {
+  font-size: 11px;
+  color: #738271;
+  margin: 0 0 12px;
+}
+
+.chart-data {
+  font-size: 11px;
+  color: #6c7f6d;
+  margin-top: 12px;
+}
+
+.chart-data summary {
+  cursor: pointer;
+  display: list-item;
+}
+
+.chart-data table {
+  margin-top: 10px;
+}
+
+.chart-data td,
+.chart-data th {
+  padding: 8px;
+}
+
+/*  ==========================================================================
+   9. TABLES
+   ==========================================================================  */
+.table-scroll {
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: left;
+}
+
+th {
+  color: #5b7181;
+  background: #f2f7fa;
+  font-weight: 500;
+  font-size: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e6ece4;
+}
+
+td {
+  padding: 13px 16px;
+  border-bottom: 1px solid #edf0eb;
+  color: #526a79;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.athlete-name {
+  font-weight: 600;
+  color: #284a37;
+}
+
+.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.rank {
+  color: #99a89a;
+  font-size: 11px;
+  width: 60px;
+}
+
+tr:hover td {
+  background: #fbfdfe;
+}
+
+.footnote {
+  font-size: 10px;
+  color: #839083;
+  border-top: 1px solid #e7ece5;
+  padding-top: 14px;
+  margin-top: 10px;
+}
+
+.empty {
+  padding: 35px 15px;
+  color: #7c887e;
+  font-size: 13px;
+  text-align: center;
+}
+
+/*  ==========================================================================
+   10. COMPARE PAGE
+   ==========================================================================  */
+.compare-controls {
+  grid-template-columns: 1fr auto 1fr 0.8fr 1fr;
+}
+
+.compare-controls p {
+  font-size: 11px;
+  color: #879184;
+  margin-bottom: 10px;
+}
+
+.versus {
+  align-self: center;
+  font-size: 13px;
+  color: #8a978b;
+  padding-top: 21px;
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.country-summary > h2 {
+  font-size: 25px;
+}
+
+.country-summary > .subtitle {
+  margin-bottom: 18px;
+}
+
+.country-summary .kpis {
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 18px;
+}
+
+.country-summary .kpi strong {
+  font-size: 28px;
+}
+
+.country-summary .eyebrow {
+  margin-bottom: 5px;
+}
+
+.country-1 > h2 {
+  color: var(--red);
+}
+
+.sport-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+
+.sport-list li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #edf0eb;
+  padding: 9px 0;
+  font-size: 12px;
+  color: #6a7d6c;
+}
+
+.sport-list li:last-child {
+  border: 0;
+}
+
+.sport-list strong {
+  color: #3a6248;
+}
+
+.sport-list strong,
+.athlete-name {
+  color: #154e70;
+}
+
+/*  ==========================================================================
+   11. SCENARIOS PAGE (form, buttons and messages)
+   ==========================================================================  */
+.scenario-note {
+  font-size: 13px;
+  color: #778372;
+  max-width: 780px;
+  margin-bottom: 24px;
+}
+
+.scenario-form {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr 0.7fr 0.6fr;
+  gap: 16px;
+}
+
+.form-actions {
+  grid-column: 1/-1;
+  display: flex;
+  gap: 10px;
+}
+
+.primary {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: white;
+}
+
+.primary:hover {
+  background: #006ca3;
+}
+
+.status {
+  font-size: 12px;
+  color: #007f38;
+  margin: 16px 0;
+  min-height: 18px;
+}
+
+.actions {
+  display: flex;
+  gap: 7px;
+}
+
+.actions button {
+  font-size: 11px;
+  padding: 5px 10px;
+}
+
+.scenario-banner,
+.storage-warning {
+  padding: 12px 16px;
+  border-radius: 7px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  background: #fff4d9;
+  color: #6e5821;
+}
+
+.storage-warning {
+  background: #fff0e8;
+  color: #864526;
+}
+
+.scenario-banner {
+  border-left: 4px solid var(--yellow);
+}
+
+/*  ==========================================================================
+   12. FOOTER
+   ==========================================================================  */
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid #dce4d9;
+  margin-top: 28px;
+  padding: 22px 0 25px;
+  font-size: 10px;
+  color: #748591;
+  border-color: #d4e0e7;
+}
+
+/*  ==========================================================================
+   13. RESPONSIVE LAYOUT
+   @media rules only apply when the screen matches the condition.
+   They change the layout for very wide screens, tablets and phones.
+   ==========================================================================  */
+@media (min-width: 1500px) {
+  .site-header {
+    padding: 0 max(48px, calc((100vw - 1304px) / 2));
+  }
+}
+
+@media (max-width: 1050px) {
+  main {
+    padding: 28px 24px 0;
+  }
+  .site-header {
+    padding: 0 24px;
+  }
+  .filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .compare-controls {
+    grid-template-columns: 1fr auto 1fr 1fr;
+  }
+  .compare-controls p {
+    grid-column: 1/-1;
+    margin: 0;
+  }
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+  .overview-grid .trend-chart {
+    height: 190px;
+  }
+  .country-chart {
+    height: 400px;
+  }
+  .kpi {
+    padding: 17px 15px;
+  }
+  .kpi strong {
+    font-size: 29px;
+  }
+  .coverage {
+    display: none;
+  }
+  .scenario-form {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  main {
+    padding: 24px 16px 0;
+  }
+  .site-header {
+    height: 60px;
+    padding: 0 16px;
+  }
+  .header-meta {
+    display: none;
+  }
+  .brand {
+    font-size: 11px;
+  }
+  .intro {
+    padding: 27px 22px;
+    border-radius: 14px;
+  }
+  .eyebrow {
+    font-size: 9px;
+  }
+  h1 {
+    font-size: 28px;
+    letter-spacing: -0.8px;
+  }
+  .subtitle {
+    font-size: 12px;
+  }
+  .data-note {
+    font-size: 11px;
+    padding: 12px;
+  }
+  .navigation {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 12px;
+  }
+  .navigation nav {
+    gap: 25px;
+  }
+  .toggle {
+    font-size: 11px;
+  }
+  .filters {
+    grid-template-columns: 1fr 1fr;
+    padding: 14px;
+    gap: 12px;
+  }
+  .kpis {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .kpi strong {
+    font-size: 29px;
+  }
+  .kpi h3 {
+    font-size: 10px;
+  }
+  .kpi p {
+    font-size: 10px;
+  }
+  .section-line {
+    align-items: start;
+  }
+  .section-line span {
+    max-width: 130px;
+    text-align: right;
+    font-size: 10px;
+  }
+  .panel {
+    padding: 16px;
+  }
+  .panel-heading {
+    margin-bottom: 16px;
+  }
+  .panel-heading h2 {
+    font-size: 15px;
+  }
+  .insight {
+    line-height: 1.8;
+  }
+  .insight > span {
+    display: block;
+  }
+  .compare-grid {
+    grid-template-columns: 1fr;
+  }
+  .compare-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+  .compare-controls .versus {
+    display: none;
+  }
+  .scenario-form {
+    grid-template-columns: 1fr 1fr;
+  }
+  .country-chart {
+    height: 385px;
+  }
+  footer {
+    flex-direction: column;
+    gap: 5px;
+  }
+  th,
+  td {
+    padding: 11px 10px;
+  }
+  .scenario-form label:first-child {
+    grid-column: 1/-1;
+  }
+  .rings-mark {
+    transform: scale(0.82);
+    transform-origin: left center;
+    width: 56px;
+    flex-basis: 56px;
+  }
+  .intro h1 {
+    font-size: 29px;
+  }
+  .hero-chips span:nth-child(3) {
+    display: none;
+  }
+}
+
+/*  ==========================================================================
+   14. INSIGHT SPOTLIGHT (the "What stands out" sentences)
+   ==========================================================================  */
+.spotlight {
+  margin: 20px 0;
+  background: #eef7fb;
+  border-left: 4px solid var(--blue);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 16px;
+}
+
+.spotlight h2 {
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #496679;
+  margin-bottom: 10px;
+}
+
+/* The observations sit side by side on wide screens and stack on phones. */
+.spotlight ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.spotlight h3 {
+  font-size: 13px;
+  color: #123b57;
+  margin-bottom: 4px;
+}
+
+.spotlight p {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #2f4a5c;
+}
+
+.spotlight .spotlight-caveat {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #5d7282;
+}
