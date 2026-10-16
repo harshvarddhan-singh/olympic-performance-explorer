@@ -1,60 +1,73 @@
-# Power BI handoff
+# Power BI report
 
-This folder contains the actual six source tables, ready for import, DAX measures, a theme and an exact one-page report specification. This is not a finished PBIX. Power BI Desktop cannot run natively on the Mac used here, so the DAX and report must be checked in Power BI on Windows. No native Power BI rendering or execution is claimed.
+`Olympic Performance Explorer.pbix` is the completed three-page Power BI Desktop
+report built from `../Olympic Games Dataset.xlsx`.
 
-## 1. Import and model
+## Pages
 
-In Power BI Desktop, Get data → Text/CSV. Load `medals.csv`, `athletes.csv`, `countries.csv`, `events.csv`, `sports.csv`, `medalTypes.csv` from this folder. Use UTF-8 and comma delimiters. These CSVs were extracted directly from the included Excel workbook. Alternatively import the six original Excel tables and rename their columns to the CSV headers.
+### 1. Overview
 
-Set all ID fields, count, age, population, year and birthYear to Whole number. Empty athleteId, age and birthYear values stay null. All other fields are Text. Do not replace missing athleteId with zero. Keep `id` unique on every dimension. Do not summarize ID columns.
+- Season, Games year and region slicers
+- Athlete medals, gold share, distinct medallists, medals per million and top-10
+  concentration KPIs
+- Top countries by athlete-medal volume
+- Top countries by medals per million, with a 50-medal minimum to reduce
+  small-sample distortion
+- Dynamic DAX narrative that updates with the slicers
 
-Create these active one-to-many relationships, using **single** filter direction from the lookup to medals:
+### 2. What drives success
 
-| Lookup (one side) | Fact (many side) |
-|---|---|
-| countries[id] | medals[countryId] |
-| athletes[id] | medals[athleteId] |
-| events[id] | medals[eventId] |
-| sports[id] | medals[sportId] |
-| medalTypes[id] | medals[medalTypeId] |
+- Medals per million by GDP-per-capita band
+- Share of countries in each wealth band that won a medal
+- Country scatter plot using GDP per capita, medals per million, region and medal
+  volume
+- Host medals at home compared with the host country's average at other Games of the
+  same season
+- Host-uplift table and dynamic narrative
 
-Do not relate athlete country or sport text to the country/sport dimensions. The medal fact's IDs are authoritative. Five medals rows have no athlete: keep them. Disable automatic date/time if desired; year is a numeric category, not a full date.
+These visuals show associations and should not be interpreted as proof that wealth or
+hosting caused the result.
 
-## 2. Measures
+### 3. Country profile
 
-Copy each expression from `measures.dax` into a separate New measure. Use count formats `#,0`, per-million format `0.00`, and percentage `0.0%`. The Overview population denominator counts each country with medals in the current selection once. Unknown or nonpositive population produces blank, not an inflated rate. Do not average country-level ratios.
+- Country, season and date controls
+- Athlete medals, rank, gold share, distinct medallists and medals per million
+- Medal mix by Games
+- Top sports
+- Dynamic country summary
 
-Scenarios are intentionally browser-only. The BI tables contain original records. If scenarios are later imported, leave athleteId null, retain the source/scenario flag, and use that flag to explicitly exclude them from the distinct-athlete measure.
+## Data model
 
-## 3. One-page report (16:9, 1280 × 720)
+The report uses a star schema with `FactMedals` connected to country, athlete, Games,
+sport, medal-type and date dimensions. Measures are kept in a dedicated `_Measures`
+table and grouped into core, per-person, ranking, host-advantage and narrative folders.
 
-Title: **Olympic performance, 2000–2012**
+The source represents **athlete medals**, not the official event-level medal table. A
+team medal appears once for every team member. Population and GDP are snapshot values,
+so per-person and wealth analysis are useful comparisons rather than historically exact
+rates. Five medal rows have no athlete ID; they remain in medal totals but are excluded
+from distinct-medallist calculations.
 
-Subtitle/message: **Population changes the perspective: the USA leads total athlete medals; smaller countries can lead per person.** This is a dataset-wide observation. Slicers can change the leaders.
+## Validation values
 
-| Position (x, y, width, height) | Visual and fields |
-|---|---|
-| 24, 85, 300, 55 | events[season] slicer, single select, default Summer |
-| 340, 85, 300, 55 | events[year] dropdown slicer, all years |
-| 656, 85, 300, 55 | countries[region] dropdown slicer |
-| 24, 155, 292, 85 | Athlete Medals card |
-| 332, 155, 292, 85 | Gold Athlete Medals card |
-| 640, 155, 292, 85 | Distinct Medallists card |
-| 948, 155, 308, 85 | Medals per Million card |
-| 24, 260, 600, 330 | Horizontal bar: countries[name], Athlete Medals; Top N 10 by Athlete Medals, descending |
-| 648, 260, 608, 330 | Horizontal bar: countries[name], Medals per Million; Top N 10 by that measure, descending |
-| 24, 605, 1232, 85 | Text explaining athlete medals and population snapshot; small validation note if desired |
+With all filters cleared:
 
-The pair of rankings communicates one message. Add athlete-medal totals as tooltips on the per-capita chart. Ensure the single-season selection is visible, and all slicers filter both charts and cards. Apply `theme.json` through View → Themes → Browse for themes. Keep gold/silver/bronze colors explicit if adding a stacked medal chart later.
+- 9,107 medal records
+- 9,529 athlete medals
+- 3,143 gold athlete medals
+- 6,955 distinct medallists
+- 108 medal-winning countries
 
-For interview live changes, replacing the per-capita chart with a line chart is simple: X = events[year], Y = Athlete Medals, legend = countries[name], then select two countries in a slicer. Always select one season.
+Summer contains 8,005 athlete medals, 2,631 gold athlete medals and 5,910 distinct
+medallists. United States has 1,312 athlete medals across all Games and Australia has
+609.
 
-## 4. Check before saving PBIX
+## Opening and refreshing
 
-Clear all slicers temporarily. Expected original totals: **9,529 athlete medals; 3,143 gold; 6,955 distinct medallists; 108 medal-winning countries**. Row count is 9,107 and is deliberately different from the medal total. Summer is 8,005, Winter 1,524. Reconcile each year with the totals printed by `../convert_excel.py`.
+Open the PBIX with Power BI Desktop on Windows. The imported data is embedded, so the
+saved report can be viewed without reconnecting to the workbook. If a refresh reports
+that the workbook path has changed, open **Transform data → Data source settings** and
+point the source to the copy of `Olympic Games Dataset.xlsx` in the repository root.
 
-United States total = 1,312; Australia = 609. Test Gold and Silver filters: the gold measure must respect Silver and show zero. Verify a country filter changes the population denominator. Restore Summer as the default, and save as `Olympic Performance Explorer.pbix`.
-
-The assignment requires a native Power BI dashboard/report and live DAX changes. The final Windows import, visual creation, DAX execution check and PBIX save remain necessary.
-
-Microsoft references: [Desktop requirements](https://learn.microsoft.com/power-bi/fundamentals/desktop-get-the-desktop), [star schema](https://learn.microsoft.com/power-bi/guidance/star-schema), [TREATAS](https://learn.microsoft.com/dax/treatas-function-dax), [DISTINCTCOUNTNOBLANK](https://learn.microsoft.com/dax/distinctcountnoblank-function-dax).
+The CSV files, original starter DAX and theme remain in this folder as supporting
+artifacts.

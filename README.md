@@ -119,7 +119,17 @@ npm test
 The tests contain totals from the supplied workbook, so they need updating if the
 data really changes.
 
-## Not finished
+## Power BI report
 
-The Power BI report file has not been built yet. The `power-bi/` folder only contains
-the prepared CSV tables, DAX measures and a layout description.
+The completed native report is available at
+`power-bi/Olympic Performance Explorer.pbix`. It contains three pages:
+
+1. **Overview** – slicers, KPIs, absolute medal rankings, population-adjusted
+   rankings and a dynamic narrative.
+2. **What drives success** – wealth-band comparisons, a GDP/performance scatter plot
+   and host-advantage analysis.
+3. **Country profile** – a focused country view with rank, medal mix, Games history,
+   strongest sports and a dynamic summary.
+
+Open the PBIX with Power BI Desktop on Windows. The report embeds the imported data;
+see `power-bi/README.md` for model notes, validation totals and refresh guidance.
